@@ -1,13 +1,33 @@
 ﻿using GraphQL;
-using GraphQL.Clint.Http;
+using GraphQL.Client.Http;
 using GraphQL.Client.Serializer.Newtonsoft;
 
-var graphQLHttpCLientOptions = new GraphQLHttpCLientOptions
+var graphQLHttpClientOptions = new GraphQLHttpClientOptions
 {
-    EndPoint = new Url("");
+    EndPoint = new Uri("https://ap-south-1.aws.realm.mongodb.com/api/client/v2.0/app/application-0-nqblv/graphql")
+};
+
+var httpClient = new HttpClient();
+httpClient.DefaultRequestHeaders.Add("apikey", "wVrBNnlVbU3x2VMKWqaV7g2ulqGjO0cE2UKpP1mP2wbXWAs9FJPylFpYtZGrsRaK");
+
+var graphQLClient = new GraphQLHttpClient(graphQLHttpClientOptions, new NewtonsoftJsonSerializer(), httpClient);
+
+var movieRequest = new GraphQLRequest {
+    Query = @"
+        {
+            movie {
+                title,
+                plot,
+                cast
+            }
+        }
+    "
+};
+
+var graphQLResponse = await graphQLClient.SendQueryAsync<GraphQLMovieResponse>(movieRequest);
+
+Console.WriteLine($"{graphQLResponse.Data.Movie.Title} {graphQLResponse.Data.Movie.Plot}");
+foreach (var item in graphQLResponse.Data.Movie.Cast)
+{
+    Console.WriteLine(item);
 }
-
-var httpClient = new HttpClinet();
-httpClient.DefaultRequestHeaders.Add("api-key", "");
-
-var graphQLClint = new GraphQLHttpClient(graphQLHttpCLientOptions, new NewtonsoftJsonSerializer(), httpClient);
