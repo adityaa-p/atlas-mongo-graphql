@@ -18,7 +18,8 @@ var movieRequest = new GraphQLRequest {
             movie {
                 title,
                 plot,
-                cast
+                cast,
+                runtime
             }
         }
     "
@@ -31,3 +32,4 @@ foreach (var item in graphQLResponse.Data.Movie.Cast)
 {
     Console.WriteLine(item);
 }
+Console.WriteLine(graphQLResponse.Data.Movie.Runtime);
